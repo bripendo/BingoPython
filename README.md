@@ -5,3 +5,6 @@ Just download the source, Dane.brip, and put it in the same directory as any of 
 Edit the Dane.brip as desired with having in mind that first line of the data file is title of the Tkinter application
 
 and type 1 in the command prompt
+
+
+Note: Checking for rows completed is currently not working
