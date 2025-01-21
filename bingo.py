@@ -1,12 +1,55 @@
 import tkinter as tk
 import random
 import urllib.request
-url = 'https://raw.githubusercontent.com/bripendo/BingoPython/refs/heads/main/Dane.brip'
-response = urllib.request.urlopen(url)
-data = response.read().decode('utf-8')
+import ctypes
 
-a = data.split('\n')
-a = [line.strip() for line in a]
+print('1 - Użyj lokalnego pliku Dane.brip\n'
+      '2 - Użyj pliku w chmurze')
+
+a=[]
+
+buttons={}
+
+
+
+def DataInput():
+    global a
+    src = 2
+    try:
+        src = int(input())
+    except ValueError:
+        print('Akceptowane wartości to:\n'
+              '1 - Użyj lokalnego pliku Dane.brip\n'
+              '2 - Użyj pliku w chmurze')
+        DataInput()
+    finally:
+        if src == 1:
+            print('Otwieram plik...')
+            with open('Dane.brip', 'r') as file:
+                a = file.readlines()
+                [line.strip() for line in a]
+                if '' in a:
+                    a.remove('')
+        elif src == 2:
+            print('Łączę z serwerem Github...')
+            url = 'https://raw.githubusercontent.com/bripendo/BingoPython/refs/heads/main/Dane.brip'
+            response = urllib.request.urlopen(url)
+            data = response.read().decode('utf-8')
+            a = data.split('\n')
+            [line.strip() for line in a]
+            if '' in a:
+                a.remove('')
+        else:
+            print('Akceptowane wartości to:\n'
+                  '1 - Użyj lokalnego pliku Dane.brip\n'
+                  '2 - Użyj pliku w chmurze')
+            DataInput()
+
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        ctypes.windll.user32.ShowWindow(hwnd, 0) #minimalizuj konsolę
+
+DataInput()
+
 name=a[0]
 random.shuffle(a)
 a[a.index(name)],a[12]=a[12],a[a.index(name)] # jestem leniwy i nazwa bingo idzie jako zapychacz pod gwiazdkę
@@ -14,14 +57,13 @@ a[a.index(name)],a[12]=a[12],a[a.index(name)] # jestem leniwy i nazwa bingo idzi
 root = tk.Tk()
 root.title(name)
 
-buttons={} #specjalna lista na przechowywanie przyciskow
+ #specjalna lista na przechowywanie przyciskow
 
 # przyciski są toggleable
 def bingo(r, c):
     current_color = buttons[(r,c)].cget("bg")
     new_color = "brown" if current_color == "white" else "white"
-    buttons[(r,c)].config(bg=new_color)
-
+    buttons[(r, c)].config(bg=new_color)
 # siatka 5x5
 for i in range(5):
     for j in range(5):
@@ -31,21 +73,5 @@ for i in range(5):
         root.grid_rowconfigure(i, weight=1)
         root.grid_columnconfigure(j,weight=1)
 
-'''
-def aspect_ratio(event):
-    desired_aspect_ratio = 16 / 9  # Example aspect ratio (width / height)
-
-    # Calculate the new dimensions while maintaining the aspect ratio
-    new_width = event.width
-    new_height = int(new_width / desired_aspect_ratio)
-
-    # Update the window size
-    if new_height != event.height:
-        root.geometry(f"{new_width}x{new_height}")
-        root.update_idletasks()
-
-
-root.bind("<Configure>", aspect_ratio)
-'''
 buttons[(2,2)].config(text='⭐',bg='brown',state='disabled') #srodek
 root.mainloop()
